@@ -20,6 +20,10 @@ export default class FormValidator {
             this.checkInput(input);
             this.validateInput(input, test, errorMsg);
         });
+
+        if (!document.querySelector('.invalid-feedback')){
+            this.displaySucess();
+        }
     }
 
     validateInput(input, test, errorMsg) {
@@ -79,6 +83,16 @@ export default class FormValidator {
         if (input.parentNode.contains(error)) {
             input.parentNode.removeChild(error);
         }
+    }
+
+    displaySucess(){
+        this.form.style.display = "none";
+        const successEl = document.createElement('h3');
+        successEl.setAttribute('class', 'valid-feedback mb-5');
+        successEl.style.display = "block";
+        successEl.innerText = "You've successfully submitted the form. Check the console for form data";
+        this.form.parentNode.insertBefore(successEl, this.form.nextSibling);
+
     }
 
     logOutData(){
