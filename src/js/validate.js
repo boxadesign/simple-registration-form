@@ -26,6 +26,32 @@ export default class FormValidator {
         }
     }
 
+    checkInput(input) {
+        switch(input.name) {
+            case 'name':
+                test = /^((?=.{1,20}$)[^0-9]*)$/;
+                errorMsg = "Name can only contain letters and a maximum of 20 characters."
+            break;
+            
+            case 'email':
+                test = /(.+)@(.+){2,}\.(.+){2,}/;
+                errorMsg = "You must enter a valid email address."
+            break;
+
+            case 'password':
+                test = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+                errorMsg = "Your password must contain at least one upper character, one lower character and a number. It must be at least eight characters long."
+            break;
+
+            case 'confirm-password':
+                this.checkPasswordsMatch(input);
+                test = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+                errorMsg = "Your passwords do not match";
+            break;
+        }
+        return test, errorMsg;
+    }
+
     validateInput(input, test, errorMsg) {
         this.testInput(test, input);
         if (result === false) {
@@ -35,39 +61,22 @@ export default class FormValidator {
             this.removeError(input);
         }
     }
-
-    checkInput(input) {
-        if(input.name === 'name') {
-            test = /^((?=.{1,20}$)[^0-9]*)$/;
-            errorMsg = "Name can only contain letters and a maximum of 20 characters."
-        } else if (input.name === 'email'){
-            test = /(.+)@(.+){2,}\.(.+){2,}/;
-            errorMsg = "You must enter a valid email address."
-        } else if (input.name === 'password') {
-            test = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-            errorMsg = "Your password must contain at least one upper character, one lower character and a number. It must be at least eight characters long."
-        } else if (input.name === 'confirm-password') {
-            this.checkPasswordsMatch(input);
-            test = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-            errorMsg = "Your passwords do not match";
-        }
-        return test, errorMsg;
+        
+    testInput(test, input) {
+        result = test.test(input.value);
+        return result;
     }
 
     checkPasswordsMatch(input) {
         const password = document.getElementsByName('password')[0];
         const confirmPassword = document.getElementsByName('confirm-password')[0];
-        if(password.value !== confirmPassword.value) {
+
+        if (password.value !== confirmPassword.value) {
             this.removeError(input);
             this.createError(input, errorMsg);
         } else {
             this.removeError(input);
         }
-    }
-        
-    testInput(test, input) {
-        result = test.test(input.value);
-        return result;
     }
 
     createError(input, errorMsg){
@@ -92,7 +101,6 @@ export default class FormValidator {
         successEl.style.display = "block";
         successEl.innerText = "You've successfully submitted the form. Check the console for form data";
         this.form.parentNode.insertBefore(successEl, this.form.nextSibling);
-
     }
 
     logOutData(){
